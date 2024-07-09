@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDR5 Memory Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>DDR5 Memory Calculator</h1>
+        <form method="post">
+            <label for="clock_speed">Clock Speed (MHz):</label>
+            <input type="number" id="clock_speed" name="clock_speed" required><br><br>
+            <label for="bus_width">Bus Width (bits):</label>
+            <input type="number" id="bus_width" name="bus_width" required><br><br>
+            <label for="channels">Number of Channels:</label>
+            <input type="number" id="channels" name="channels" required><br><br>
+            <label for="cas_latency">CAS Latency (cycles):</label>
+            <input type="number" id="cas_latency" name="cas_latency" required><br><br>
+            <input type="submit" value="Calculate">
+        </form>
+
+
+        <h2>Results:</h2>
+        <p>Bandwidth: {{ bandwidth }} GB/s</p>
+        <p>Latency: {{ latency }} ns</p>
+        {% endif %}
+    </div>
+</body>
+</html>
