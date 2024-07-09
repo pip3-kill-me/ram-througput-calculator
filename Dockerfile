@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the requirements file
-COPY requirements.txt requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5000
 
 # Define the command to run the app
-CMD ["python", "app.py"]
+CMD ["python", "calculator.py"]
