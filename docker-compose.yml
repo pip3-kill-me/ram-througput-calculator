@@ -1,8 +1,8 @@
-version: '3.8'
-
+version: '3'
 services:
   flask-app:
-    image: /home/plets/ramcalculator/ram-througput-calculator:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
-    restart: always
