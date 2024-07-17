@@ -1,6 +1,5 @@
 .venv/
 venv/
-ENV/
 env/
 .virtualenv/
 venvprojeto/
