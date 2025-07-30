@@ -3,29 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DDR5 Memory Calculator</title>
+    <title>DDR Memory Comparator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>DDR5 Memory Calculator</h1>
-        <form method="post">
-            <label for="clock_speed">Clock Speed (MHz):</label>
-            <input type="number" id="clock_speed" name="clock_speed" required><br><br>
-            <label for="bus_width">Bus Width (bits):</label>
-            <input type="number" id="bus_width" name="bus_width" required><br><br>
-            <label for="channels">Number of Channels:</label>
-            <input type="number" id="channels" name="channels" required><br><br>
-            <label for="cas_latency">CAS Latency (cycles):</label>
-            <input type="number" id="cas_latency" name="cas_latency" required><br><br>
-            <input type="submit" value="Calculate">
-        </form>
+        <div class="calculator">
+            <h1>DDR Memory Comparator</h1>
+            <form method="post">
+                <label for="memory_name">Memory Name (e.g., "G.Skill Trident Z5"):</label>
+                <input type="text" id="memory_name" name="memory_name" required><br><br>
 
-
-        <h2>Results:</h2>
-        <p>Bandwidth: {{ bandwidth }} GB/s</p>
-        <p>Latency: {{ latency }} ns</p>
-        {% endif %}
+                <label for="clock_speed">Clock Speed (MHz):</label>
+                <input type="number" id="clock_speed" name="clock_speed" required><br><br>
+                
+                <label for="channels">Number of Channels:</label>
+                <input type="number" id="channels" name="channels" required value="2"><br><br>
+                
+                <label for="cas_latency">CAS Latency (cycles):</label>
+                <input type="number" id="cas_latency" name="cas_latency" required><br><br>
+                
+                <input type="submit" value="Add to Graph">
+            </form>
+            <a href="/clear" class="clear-button">Clear Graph</a>
+        </div>
+        
+        <div class="chart-container">
+            <h2>Performance Comparison</h2>
+            {% if user_results %}
+                <canvas id="performanceChart"></canvas>
+            {% else %}
+                <p>Submit data to build the graph.</p>
+            {% endif %}
+        </div>
     </div>
+
+    <footer>
+        <span>Version 1.1</span>
+        <a href="https://github.com/pip3-kill-me/ram-througput-calculator.git" target="_blank" rel="noopener noreferrer" title="GitHub Repository">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" id="github-icon">
+                <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 
+                2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 
+                0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 
+                1.08.58 1.23.82.72 1.21 1.87.87 
+                2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 
+                0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 
+                0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 
+                0 1.36.09 2 .27 1.53-1.04 2.2-.82 
+                2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 
+                1.28.82 2.15 0 3.07-1.87 3.75-3.65 
+                3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 
+                2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 
+                16 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+
+        </a>
+    </footer>
+
+    {% if user_results %}
+    <script>
+        const results = JSON.parse('{{ user_results | tojson | safe }}');
+        
+        const labels = results.map(r => r.name);
+        const bandwidthData = results.map(r => r.bandwidth);
+        const latencyData = results.map(r => r.latency);
+
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Bandwidth (GB/s)',
+                        data: bandwidthData,
+                        backgroundColor: 'rgba(187, 134, 252, 0.6)',
+                        borderColor: 'rgba(187, 134, 252, 1)',
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Latency (ns)',
+                        data: latencyData,
+                        type: 'line',
+                        borderColor: 'rgba(3, 218, 197, 1)',
+                        backgroundColor: 'rgba(3, 218, 197, 0.6)',
+                        tension: 0.1,
+                        yAxisID: 'y1',
+                    }
+                ]
+            },
+            options: {
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuad',
+                    delay: (context) => {
+                        let delay = 0;
+                        if (context.type === 'data' && context.mode === 'default') {
+                            delay = context.dataIndex * 150 + context.datasetIndex * 100;
+                        }
+                        return delay;
+                    },
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Bandwidth (GB/s)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Latency (ns)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html>

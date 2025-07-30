@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     background-color: #121212;
     color: #ffffff;
@@ -5,32 +11,46 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
+    min-height: 100vh;
 }
 
 .container {
+    display: flex;
+    gap: 40px;
     background-color: #1e1e1e;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 300px;
+    width: 90%;
+    max-width: 1000px;
+    align-items: center; 
 }
 
-h1 {
+.calculator {
+    width: 300px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.chart-container {
+    flex-grow: 1;
+    text-align: center;
+}
+
+h1, h2 {
     color: #bb86fc;
 }
 
 label {
     display: block;
     margin: 10px 0 5px;
+    text-align: left;
 }
 
-input[type="number"], input[type="submit"] {
+input[type="number"], input[type="text"], select {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     border-radius: 4px;
     border: 1px solid #bb86fc;
     background-color: #2c2c2c;
@@ -38,11 +58,67 @@ input[type="number"], input[type="submit"] {
 }
 
 input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
     background-color: #bb86fc;
     border: none;
     cursor: pointer;
+    color: #121212;
+    font-weight: bold;
 }
 
 input[type="submit"]:hover {
     background-color: #a76bdb;
+}
+
+.clear-button {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    background-color: #cf6679;
+    color: #121212;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.clear-button:hover {
+    background-color: #b05169;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1e1e1e;
+    font-size: 0.9em;
+    color: #888; /* This sets the text color, which also applies to the icon via currentColor */
+}
+
+footer a {
+    color: #888; /* Match the default text color */
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+footer a:hover {
+    color: #bb86fc; /* Needed for currentColor hover to work */
+}
+
+#github-icon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    display: inline-block;
+    vertical-align: middle;
 }
